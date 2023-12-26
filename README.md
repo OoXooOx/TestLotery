@@ -22,6 +22,6 @@ them 1 token from their balance. This deduction is not subtracted directly from 
 only 10 "lottery tickets" and can include in the lottery list only 10 times. If the balance of a particular holder falls below 1 token after 
 filling the lottery list, that holder does not participate in further "lottery tickets" allocation. The process repeats for the remaining holders, 
 moving to the left, and checks their balances. The process moves to the right again and repeats until all holders have their "virtual balances" 
-(see algorithm in Picture №1). A random number is then generated within the total number of lottery tickets, and the holder of the token from the 
+(![see algorithm in Picture1](./Picture1.jpg)). A random number is then generated within the total number of lottery tickets, and the holder of the token from the 
 lottery list with an index equal to that random number becomes the winner. The mint function is executed to reward the winner, 
 including extra rewards based on the timer. 
