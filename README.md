@@ -15,7 +15,7 @@ The main task is to create the logic for choosing the winner with the following 
 Logic for choosing the winner:
 From the SC information, we have a list of all token holders and their balances. A script for the token should be written to handle 2000 or more 
 holders without implementing burn logic. All holders are placed in a lottery list starting from the center and moving to the right. 
-Ceneter of this list is equal to totalSupply/2. If totalSupply/2 even then we start fill from totalSupply/2+1, if not - we cut fractional part of result 
+Center of this list is equal to totalSupply/2. If totalSupply/2 even then we start fill from totalSupply/2+1, if not - we cut fractional part of result 
 and still do+1. For example if totalSupply 15 - we start fill list from 8, if totalSupply 16 - we start fill list from 9.
 The list is filled, and the remaining balance for each holder is calculated. Every fill of the lottery list for a particular holder "costs" 
 them 1 token from their balance. This deduction is not subtracted directly from the balance. For example, a holder with 10 tokens can receive 
