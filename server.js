@@ -4,22 +4,22 @@ const express = require('express');
 const ABI = require('./ABI.json');
 const fs = require("fs");
 const app = express();
+
 const balances = require("./balances");
 const holdersForLotery = require("./holdersForLotery");
 const { createSignature } = require("./createSignature");
 let totalSupplyForLoteryRounded = require("./totalSupplyForLoteryRounded.json");
-let nonce = require("./nonce.json");
+const nonces = require("./nonces.json");
 
-const provider = new ethers.providers.JsonRpcProvider('https://ethereum.publicnode.com');
-const contractABI = ABI;
-const contractAddress = '0xcE8fB57dceF7F05b4110EAFe881dC51fc51A27A0';
+const provider = new ethers.providers.JsonRpcProvider('https://ethereum-goerli.publicnode.com');
+//goerli 0xaa6b081660709F8cBB9a8FA6782354F5e61A41ed  SC address predictor
+const contractAddress = '0xb90A4104787b84b89B27C06A7185dd5CDc557DF5';
 const operator = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
 // const DOMAIN_SEPARATOR = "0x04886e1af7b232721ab2204ede9ab4abe712a00af54f3000ec946dbd091651bf";
-const timeForValidSignature = 86400; //24h
 
 const enableLotery = true;
 
-const contract = new ethers.Contract(contractAddress, contractABI, provider);
+const contract = new ethers.Contract(contractAddress, ABI, provider);
 const loteryTickets = new Map();
 const oneToken = BigInt("0x5F5E100");// 1*10**8 
 
@@ -211,6 +211,7 @@ const createLoteryTickets = () => {
                 countOfNotEnoughFounds = 0;
             }
         }
+        // console.log(loteryTickets);
     } catch (err) {
         console.log(err.message);
     }
@@ -261,25 +262,24 @@ contract.on('Transfer', async (from, to, value, rewards) => {
             console.log("winner loteryTicket number:", loteryTicket);
             console.log("address winner:", winner);
             console.log("loteryTickets.size", loteryTickets.size);
-            const deadline = Math.floor(Date.now() / 1000) + timeForValidSignature;
             const DOMAIN_SEPARATOR = await contract.DOMAIN_SEPARATOR();
-            console.log("nonce", nonce);
+            let currentWinnerNonce = nonces[winner] || 0;
+            console.log("nonce", currentWinnerNonce);
             const signature = createSignature(
                 winner,              
                 rewards._hex,       
-                nonce++,            
-                deadline,           
+                currentWinnerNonce++,                       
                 DOMAIN_SEPARATOR);
+            nonces[winner] = currentWinnerNonce;
             const { r, s, v } = ethers.utils.splitSignature(signature);
-            fs.writeFile('nonce.json', JSON.stringify(nonce), (err) => {
+            fs.writeFile('nonces.json', JSON.stringify(nonces), (err) => {
                 if (err) {
-                    console.error("Error writing nonce.json:", err);
+                    console.error("Error writing nonces.json:", err);
                 }
             })    
             console.log('r:', r);
             console.log('s:', s);
             console.log('v:', v);
-            console.log("deadline:", deadline);
             console.log("rewards", rewards._hex);
         }
     } catch (err) {

@@ -929,7 +929,7 @@ abstract contract ERC20Permit is ERC20, IERC20Permit, EIP712, Nonces {
 
 contract Test is ERC20, ERC20Permit {
     // keccak256("Claim(address winner,uint256 value,uint256 nonce,uint256 deadline)");
-    bytes32 public constant CLAIM_TYPEHASH = 0x63e295758710f1c68a97c6ce3047ffb03df3d558a6799acfe47ae0f28fbbc6ad;
+    bytes32 public constant CLAIM_TYPEHASH = 0xee15fd60c50663533091cf4668b36005f1a41ec3027db1e2394fb4be5c40d9e9;
     uint public maxSupply = 1000000*10**decimals();
     uint public lastTransfer; 
     address public operator = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
@@ -966,31 +966,18 @@ contract Test is ERC20, ERC20Permit {
         super._mint(account, amount);
     }
 
-    function claimRewards(
-        address winner,
-        uint256 value,
-        uint256 deadline,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
-    ) external {
-        if (block.timestamp > deadline) {
-            revert ERC2612ExpiredSignature(deadline);
-        }
-        
+    function claimRewards(uint256 value, uint8 v, bytes32 r, bytes32 s) external {
         bytes32 structHash = keccak256(abi.encode(
             CLAIM_TYPEHASH,
-            winner, 
-            value, 
-            _useNonce(operator), 
-            deadline));
-
+            msg.sender, 
+            value,
+            _useNonce(msg.sender)));
         bytes32 hash = _hashTypedDataV4(structHash);
         address signer = ECDSA.recover(hash, v, r, s);
         if (signer != operator) {
             revert ERC2612InvalidSigner(signer, operator);
         }
-        _mint(winner, value);
+        _mint(msg.sender, value);
     }
 
     function getRewardsForTime() view internal returns (uint reward) {
