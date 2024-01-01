@@ -1,4 +1,4 @@
-https://youtu.be/zAx6KlCaSVo?feature=shared
+https://youtu.be/zAx6KlCaSVo?feature=shared                                                                             
 Technical Task:
 
 Create an ERC-20 standard token named Test with the symbol TST. The maximum supply is 1,000,000, and it has 8 decimals. Upon deployment of the smart contract (SC), the creator is entitled to receive 5% of the maximum supply tokens. A timer is initialized at SC deployment for handling extra rewards. When the transfer or transferFrom functions are executed, extra rewards in tokens will be minted for the lottery winner. Extra rewards are calculated as 1 TST for 1 second since the previous transfer. For example, if an hour has passed between transfers, the winner must receive 3,600 TST tokens. After each transfer, the timer resets, and this process continues until the max supply of tokens is reached. In lotery can participate holders with more than 1 token balances.
